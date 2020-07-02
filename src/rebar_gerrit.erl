@@ -41,7 +41,7 @@ lock_(_AppDir, {gerrit, Url, {ref, Ref}}) ->
 needs_update(AppInfo, _) ->
   needs_update_(rebar_app_info:dir(AppInfo), rebar_app_info:source(AppInfo)).
 
-needs_update_(_Dir, {svn, _Url, {branch, _Branch}}) ->
+needs_update_(_Dir, {gerrit, _Url, {ref, _Ref}}) ->
   %% TODO: Need to be implemented
   false.
 
@@ -73,18 +73,5 @@ download_(Dir, {gerrit, Url, {ref, Refs}}, _State) ->
                    " pull origin " ++ rebar_utils:escape_double_quotes(Refs),
                      [{use_stdout, false}, {debug_abort_on_error, AbortMsg}]).
 
-make_vsn(AppInfo, _) ->
-    make_vsn_(rebar_app_info:dir(AppInfo)).
-
-make_vsn_(Dir) ->
-    AbortMsg = io_lib:format("Get git revision of failed in ~ts", [Dir]),
-    Rev = rebar_utils:sh("git -C " ++ rebar_utils:escape_double_quotes(Dir) ++ " rev-parse HEAD",
-                         [{use_stdout, false}, {debug_abort_on_error, AbortMsg}]),
-    {plain, trim(Rev)}.
-
-%%====================================================================
-%% Internal functions
-%%====================================================================
-
-trim(Str) ->
-    rebar_string:trim(rebar_string:trim(Str, both, "\n"), both, "\r").
+make_vsn(_, _) ->
+    {plain, "1.0.0"}.
