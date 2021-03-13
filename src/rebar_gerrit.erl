@@ -70,7 +70,10 @@ download_(Dir, {gerrit, Url, {ref, Refs}}, _State) ->
                      [{cd, filename:dirname(Dir)}, {use_stdout, false}]),
     %% Fetch to the respective reference at gerrit
     rebar_utils:sh("git -C " ++ rebar_utils:escape_double_quotes(Dir) ++
-                   " pull origin " ++ rebar_utils:escape_double_quotes(Refs),
+                   " fetch origin " ++ rebar_utils:escape_double_quotes(Refs),
+                     [{use_stdout, false}, {debug_abort_on_error, AbortMsg}]),
+    rebar_utils:sh("git -C " ++ rebar_utils:escape_double_quotes(Dir) ++
+                   " checkout FETCH_HEAD",
                      [{use_stdout, false}, {debug_abort_on_error, AbortMsg}]).
 
 make_vsn(_, _) ->
